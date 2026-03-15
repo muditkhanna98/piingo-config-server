@@ -24,8 +24,10 @@ The server reads its Git backend settings from environment variables:
 
 | Variable | Required | Default | Description |
 | --- | --- | --- | --- |
-| `CONFIG_REPO_URI` | Yes | `<url-to-repo>` | Git repository that stores application config files |
+| `CONFIG_REPO_URI` | No | `https://github.com/muditkhanna98/piingo-config.git` | Git repository that stores application config files |
 | `CONFIG_REPO_BRANCH` | No | `main` | Git branch the config server should read from |
+| `CONFIG_REPO_USERNAME` | No | empty | Git username for private repository access |
+| `CONFIG_REPO_PASSWORD` | No | empty | Git password or personal access token for private repository access |
 
 ## Expected Config Repo Structure
 
@@ -56,11 +58,24 @@ custom:
 
 ## Running Locally
 
-Set the config repo URL before starting the server:
+Start the server with the default config repo:
+
+```bash
+export CONFIG_REPO_BRANCH=main
+./mvnw spring-boot:run
+```
+
+If you want to override the repo URI later:
 
 ```bash
 export CONFIG_REPO_URI=https://github.com/<your-org>/<your-config-repo>.git
-export CONFIG_REPO_BRANCH=main
+```
+
+If the Git repo is private, also provide credentials:
+
+```bash
+export CONFIG_REPO_USERNAME=<github-user-name>
+export CONFIG_REPO_PASSWORD=<github-personal-access-token>
 ./mvnw spring-boot:run
 ```
 
@@ -102,6 +117,8 @@ spring.config.import=optional:configserver:http://localhost:8888
 
 With that in place, `user-service` will request its configuration from this server during startup.
 
+Because this server points to `https://github.com/muditkhanna98/piingo-config.git` by default, a request to `GET /user-service/default` will resolve configuration from `user-service.yml` in that repository's `main` branch.
+
 ## Build And Test
 
 Run tests:
@@ -114,4 +131,5 @@ Run tests:
 
 - `clone-on-start` is disabled, so the app can boot even before the real Git repo is configured.
 - `force-pull` is enabled so the server refreshes from the remote repository when serving config.
+- For a private GitHub repository, use a GitHub personal access token in `CONFIG_REPO_PASSWORD`.
 - The checked-in `config-repo/` folder is only leftover local scaffolding from the initial native setup and is no longer used by the active server configuration.

@@ -5,8 +5,10 @@ spring:
     config:
       server:
         git:
-          uri: ${CONFIG_REPO_URI:https://github.com/your-org/piingo-user-service-config.git}
+          uri: ${CONFIG_REPO_URI:https://github.com/muditkhanna98/piingo-config.git}
           default-label: ${CONFIG_REPO_BRANCH:main}
+          username: ${CONFIG_REPO_USERNAME:}
+          password: ${CONFIG_REPO_PASSWORD:}
           clone-on-start: false
           force-pull: true
           timeout: 5
